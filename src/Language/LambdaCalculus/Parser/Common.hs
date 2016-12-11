@@ -7,6 +7,10 @@ module Language.LambdaCalculus.Parser.Common
   , reserved
   , reservedOp
   , whiteSpace
+  , arrow
+  , backslash
+  , colon
+  , dot
   ) where
 
 import Language.LambdaCalculus.AST
@@ -32,3 +36,7 @@ identifier  = P.identifier lexer
 reserved    = P.reserved lexer
 reservedOp  = P.reservedOp lexer
 whiteSpace  = P.whiteSpace lexer
+backslash   = P.symbol lexer "\\"
+arrow       = P.symbol lexer "->"
+dot         = P.dot lexer
+colon       = P.colon lexer
