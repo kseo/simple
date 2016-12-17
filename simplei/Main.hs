@@ -19,7 +19,7 @@ loop = do
           Left e -> do
             outputStrLn (show e)
             loop
-          Right ty -> outputStrLn $ "type: " ++ show ty
+          Right _ -> return ()
         let term = eval [] p
         outputStrLn $ printTm [] term
         loop
