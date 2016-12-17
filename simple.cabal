@@ -26,6 +26,7 @@ library
                        Language.LambdaCalculus.Parser.Types
                        Language.LambdaCalculus.Pretty
                        Language.LambdaCalculus.Pretty.Term
+                       Language.LambdaCalculus.Pretty.Types
                        Language.LambdaCalculus.TypeChecker
                        Language.LambdaCalculus.Types
   build-depends:       base >= 4.7 && < 5,
