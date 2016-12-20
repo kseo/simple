@@ -10,11 +10,8 @@ import Language.LambdaCalculus.Parser.Types
 
 import Text.Parsec
 
-type BoundContext = [String]
-type LCParser = Parsec String BoundContext Term
-
-parseAbs :: LCParser -> LCParser
-parseAbs termParser = do
+parseAbs :: LCParser Term
+parseAbs = do
   pos <- getPosition
   _ <- backslash
   v <- identifier
@@ -22,55 +19,55 @@ parseAbs termParser = do
   _ <- colon
   ty <- parseType
   _ <- dot
-  term <- termParser
+  term <- parseTerm
   modifyState tail
   return $ TmAbs (infoFrom pos) v ty term
 
-parseVar :: LCParser
+parseVar :: LCParser Term
 parseVar = do
   v <- identifier
   list <- getState
   findVar v list
 
-findVar :: String -> BoundContext -> LCParser
+findVar :: String -> BoundContext -> LCParser Term
 findVar v list = case elemIndex v list of
   Nothing -> fail $ "The variable " ++ v ++ " has not been bound"
   Just n  -> do
     pos <- getPosition
     return $ TmVar (infoFrom pos) n (length list)
 
-parseTrue :: LCParser
+parseTrue :: LCParser Term
 parseTrue = do
   pos <- getPosition
   reserved "true"
   return $ TmTrue (infoFrom pos)
 
-parseFalse :: LCParser
+parseFalse :: LCParser Term
 parseFalse = do
   pos <- getPosition
   reserved "false"
   return $ TmFalse (infoFrom pos)
 
-parseIf :: LCParser -> LCParser
-parseIf termParser = do
+parseIf :: LCParser Term
+parseIf = do
   pos <- getPosition
   reserved "if"
-  c <- termParser
+  c <- parseTerm
   reserved "then"
-  t <- termParser
+  t <- parseTerm
   reserved "else"
-  e <- termParser
+  e <- parseTerm
   return $ TmIf (infoFrom pos) c t e
 
-parseNonApp :: LCParser
+parseNonApp :: LCParser Term
 parseNonApp =  parens parseTerm   -- (M)
-           <|> parseAbs parseTerm -- $\lambda$x.M
-           <|> parseIf parseTerm  -- if a then b else c
+           <|> parseAbs           -- $\lambda$x.M
+           <|> parseIf            -- if a then b else c
            <|> parseTrue          -- true
            <|> parseFalse         -- false
            <|> parseVar           -- x
 
-parseTerm :: LCParser
+parseTerm :: LCParser Term
 parseTerm = chainl1 parseNonApp $ do
   whiteSpace
   pos <- getPosition

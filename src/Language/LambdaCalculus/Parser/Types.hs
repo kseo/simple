@@ -7,11 +7,11 @@ import Language.LambdaCalculus.Types
 
 import Text.Parsec
 
-parseBoolType :: Parsec String u Ty
-parseBoolType = reserved "Bool" >> return TyBool
+parseTyBool :: LCParser Ty
+parseTyBool = reserved "Bool" >> return TyBool
 
-parseFunctionType :: Parsec String u (Ty -> Ty -> Ty)
-parseFunctionType = arrow >> return TyArr
+parseTyArr :: LCParser (Ty -> Ty -> Ty)
+parseTyArr = arrow >> return TyArr
 
-parseType :: Parsec String u Ty
-parseType = parseBoolType `chainr1` parseFunctionType
+parseType :: LCParser Ty
+parseType = parseTyBool `chainr1` parseTyArr
