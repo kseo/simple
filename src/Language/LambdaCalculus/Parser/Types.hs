@@ -13,5 +13,9 @@ parseTyBool = reserved "Bool" >> return TyBool
 parseTyArr :: LCParser (Ty -> Ty -> Ty)
 parseTyArr = arrow >> return TyArr
 
+parseNonTyArr :: LCParser Ty
+parseNonTyArr = parens parseType
+            <|> parseTyBool
+
 parseType :: LCParser Ty
-parseType = parseTyBool `chainr1` parseTyArr
+parseType = parseNonTyArr `chainr1` parseTyArr
